@@ -1,10 +1,10 @@
-package ucuenca.ejemplo.demo;
+package ucuenca.store.customerservice.customerservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoApplicationTests {
+class CustomerServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
