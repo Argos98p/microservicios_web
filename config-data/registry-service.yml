@@ -1,5 +1,5 @@
-erver:
-  port: 8099
+server:
+  port: 8199
 
 eureka:
   instance:
@@ -8,4 +8,4 @@ eureka:
     registerWithEureka: false
     fetchRegistry: false
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/ 
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
