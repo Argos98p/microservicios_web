@@ -1,5 +1,5 @@
 server:
-  port: 8094
+  port: 8194
 spring:
   datasource:
     username: sa
@@ -17,3 +17,7 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: none
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8199/eureka/
