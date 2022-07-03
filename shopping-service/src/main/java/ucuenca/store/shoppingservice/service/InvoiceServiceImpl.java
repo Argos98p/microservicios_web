@@ -4,8 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ucuenca.store.shoppingservice.client.CustomerClient;
+import ucuenca.store.shoppingservice.client.ProductClient;
 import ucuenca.store.shoppingservice.entity.Invoice;
 
+import ucuenca.store.shoppingservice.entity.InvoiceItem;
+import ucuenca.store.shoppingservice.model.Customer;
+import ucuenca.store.shoppingservice.model.Product;
 import ucuenca.store.shoppingservice.repository.InvoiceItemsRepository;
 import ucuenca.store.shoppingservice.repository.InvoiceRepository;
 
@@ -19,6 +24,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     InvoiceRepository invoiceRepository;
+
+    @Autowired
+    CustomerClient customerClient;
+
+    @Autowired
+    ProductClient productClient;
 
     @Autowired
     InvoiceItemsRepository invoiceItemsRepository;
@@ -36,7 +47,12 @@ public class InvoiceServiceImpl implements InvoiceService {
             return  invoiceDB;
         }
         invoice.setState("CREATED");
-        return invoiceRepository.save(invoice);
+        invoiceDB = invoiceRepository.save(invoice);
+        invoiceDB.getItems().forEach(invoiceItem -> {
+            productClient.updateStockProduct(invoiceItem.getProductId(),invoiceItem.getQuantity()*-1);
+        });
+
+        return invoiceDB;
     }
 
 
@@ -67,6 +83,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Invoice getInvoice(Long id) {
-        return invoiceRepository.findById(id).orElse(null);
+        Invoice invoice = invoiceRepository.findById(id).orElse(null);
+        if(invoice != null){
+            Customer customer = customerClient.getCustomer(invoice.getCustomerId()).getBody();
+            invoice.setCustomer(customer);
+            List<InvoiceItem> listItem= invoice.getItems().stream().map(invoiceItem -> {
+                Product product = productClient.get_Product(invoiceItem.getProductId()).getBody();
+                invoiceItem.setProduct(product);
+                return invoiceItem;
+            }).collect(Collectors.toList());
+            invoice.setItems(listItem);
+        }
+        return invoice;
     }
 }

@@ -3,6 +3,7 @@ package ucuenca.store.shoppingservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import ucuenca.store.shoppingservice.model.Customer;
+import ucuenca.store.shoppingservice.model.Product;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -42,6 +43,12 @@ public class Invoice {
     private List<InvoiceItem> items;
 
     private String state;
+
+    @Transient
+    private Customer customer;
+
+    @Transient
+    private Product product;
 
     public Invoice(){
         items = new ArrayList<>();
