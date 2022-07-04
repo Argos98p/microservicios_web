@@ -15,6 +15,7 @@ import ucuenca.store.shoppingservice.repository.InvoiceItemsRepository;
 import ucuenca.store.shoppingservice.repository.InvoiceRepository;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,11 +88,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         if(invoice != null){
             Customer customer = customerClient.getCustomer(invoice.getCustomerId()).getBody();
             invoice.setCustomer(customer);
-            List<InvoiceItem> listItem= invoice.getItems().stream().map(invoiceItem -> {
+            List<InvoiceItem> listItem=new ArrayList<>();
+            invoice.getItems().forEach(invoiceItem -> {
+                //este coso no esta valiendo
                 Product product = productClient.get_Product(invoiceItem.getProductId()).getBody();
                 invoiceItem.setProduct(product);
-                return invoiceItem;
-            }).collect(Collectors.toList());
+                listItem.add(invoiceItem);
+            });
             invoice.setItems(listItem);
         }
         return invoice;
